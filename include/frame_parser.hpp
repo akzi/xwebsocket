@@ -31,7 +31,7 @@ namespace xwebsocket
 	class frame_parser
 	{
 	public:
-		using on_message_callback = std::function<void(std::string, frame_type, bool)>;
+		using frame_callback = std::function<void(std::string, frame_type, bool)>;
 
 		frame_parser()
 		{
@@ -42,8 +42,16 @@ namespace xwebsocket
 		{
 
 		}
-
-		frame_parser &set_on_message_callback(on_message_callback handle)
+		frame_parser(frame_parser &&parser)
+		{
+			move_reset(std::move(parser));
+		}
+		frame_parser &operator= (frame_parser &&parser)
+		{
+			move_reset(std::move(parser));
+			return *this;
+		}
+		frame_parser &regist_frame_callback(const frame_callback &handle)
 		{
 			message_callback_handle_ = handle;
 			return *this;
@@ -95,6 +103,17 @@ namespace xwebsocket
 			
 		}
 	private:
+		void move_reset(frame_parser &&parser)
+		{
+			if (&parser == this)
+				return;
+			parser_step_ = parser.parser_step_;
+			payload_len_offset_ = parser.payload_len_offset_;
+			masking_key_pos_ = parser.masking_key_pos_;
+			payload_ = std::move(parser.payload_);
+			frame_header_ = std::move(parser.frame_header_);
+			message_callback_handle_ = std::move(parser.message_callback_handle_);
+		}
 		uint32_t parse_fixed_header(const char *data, uint32_t len)
 		{
 			const uint8_t *ptr = reinterpret_cast<const uint8_t*>(data);
@@ -272,6 +291,6 @@ namespace xwebsocket
 
 		frame_header frame_header_;
 
-		on_message_callback message_callback_handle_;
+		frame_callback message_callback_handle_;
 	};
 }
