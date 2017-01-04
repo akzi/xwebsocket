@@ -26,7 +26,7 @@ namespace xbase64
 		255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255
 	};
 
-	std::string encode(const std::string &data)
+	static inline std::string encode(const std::string &data)
 	{
 		const uint8_t *ptr = (const uint8_t*)data.c_str();
 		int len = (int)data.size();
@@ -65,7 +65,7 @@ namespace xbase64
 		return buffer;
 	}
 
-	bool decode(const std::string &in, std::string &out)
+	static inline bool decode(const std::string &in, std::string &out)
 	{
 		out.reserve(3 * (in.size()) / 4);
 

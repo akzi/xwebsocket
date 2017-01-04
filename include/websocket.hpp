@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "../../xutil/include/functional.hpp"
 #include "../../xnet/include/xnet.hpp"
 #include "../../xhttper/include/http_builder.hpp"
 #include "../../xhttper/include/http_parser.hpp"

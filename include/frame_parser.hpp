@@ -31,7 +31,7 @@ namespace xwebsocket
 	class frame_parser
 	{
 	public:
-		using frame_callback = std::function<void(std::string, frame_type, bool)>;
+		using frame_callback = std::function<void(std::string &&, frame_type, bool)>;
 
 		frame_parser()
 		{
@@ -246,9 +246,8 @@ namespace xwebsocket
 			{
 				unsigned char *mask =
 					(unsigned char *)&frame_header_.masking_key_;
-				uint8_t* c = (uint8_t*)(payload_.data() + payload_.size());
 				for (uint32_t i = 0; i < min_len; i++)
-					c[i] = (unsigned char)data[i] ^ mask[i % 4];
+					payload_.push_back((char)((unsigned char)data[i] ^ mask[i % 4]));
 			}
 			else
 				payload_.append(data, min_len);
@@ -256,7 +255,7 @@ namespace xwebsocket
 			if (payload_.size() == frame_header_.payload_realy_len_)
 			{
 				assert(message_callback_handle_);
-				message_callback_handle_(payload_, frame_header_.opcode_, !!frame_header_.FIN_);
+				message_callback_handle_(std::move(payload_), frame_header_.opcode_, !!frame_header_.FIN_);
 				reset();
 			}
 			return min_len;
