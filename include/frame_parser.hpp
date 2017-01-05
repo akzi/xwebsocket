@@ -132,21 +132,22 @@ namespace xwebsocket
 		uint32_t parse_payload_len(const char *data, uint32_t len)
 		{
 			const uint8_t *ptr = reinterpret_cast<const uint8_t*>(data);
+			
 			frame_header_.MASK_ = ptr[0] & 0x80;
 			frame_header_.payload_len_ = ptr[0] & (0x7f);
-			if (frame_header_.payload_len_ <= 125 && frame_header_.MASK_)
+
+			if (frame_header_.payload_len_ <= 125)
 			{
-				parser_step_ = e_masking_key;
-				frame_header_.payload_realy_len_ =
-					frame_header_.payload_len_;
-			}
-			else if (frame_header_.payload_len_ <= 125 && !frame_header_.MASK_)
-			{
-				parser_step_ = e_payload_data;
 				frame_header_.payload_realy_len_ = frame_header_.payload_len_;
+				if (frame_header_.MASK_)
+					parser_step_ = e_masking_key;
+				else
+					parser_step_ = e_payload_data;
 			}
-			else
+			else if(frame_header_.payload_len_ > 125)
+			{
 				parser_step_ = e_extened_payload_len;
+			}
 
 			if (frame_header_.payload_len_ == 0)
 			{
@@ -175,9 +176,7 @@ namespace xwebsocket
 				payload_len_offset_ += min_len;
 				if (payload_len_offset_ == 2)
 					decode_extened_payload_len();
-				return 1;
 			}
-
 			else if (frame_header_.payload_len_ == 127)
 			{
 				//Extended payload length is 64bit!
@@ -185,7 +184,6 @@ namespace xwebsocket
 				memcpy(&frame_header_.ext_payload_len_64_, ptr + offset, (size_t)min_len);
 				offset += min_len;
 				payload_len_offset_ += min_len;
-
 				if (payload_len_offset_ == 8)
 					decode_extened_payload_len();
 			}
@@ -200,7 +198,6 @@ namespace xwebsocket
 				uint8_t *buffer_ = reinterpret_cast<uint8_t*>(&tmp);
 				frame_header_.payload_realy_len_ =
 					(((uint16_t)buffer_[0]) << 8) |((uint16_t)buffer_[1]);
-				parser_step_ = e_masking_key;
 
 			}
 			else if (frame_header_.payload_len_ == 127)
@@ -216,7 +213,12 @@ namespace xwebsocket
 					(((uint64_t)buffer_[5]) << 16) |
 					(((uint64_t)buffer_[6]) << 8) |
 					((uint64_t)buffer_[7]);
+			}
+			if(frame_header_.MASK_)
 				parser_step_ = e_masking_key;
+			else
+			{
+				parser_step_ = e_payload_data;
 			}
 		}
 
@@ -239,14 +241,14 @@ namespace xwebsocket
 			if (payload_.empty())
 				payload_.reserve((size_t)frame_header_.payload_realy_len_);
 
-			auto remain = (size_t)frame_header_.payload_realy_len_ - payload_.size();
+			auto remain = (uint32_t)frame_header_.payload_realy_len_ - (uint32_t)payload_.size();
 			auto min_len = std::min<uint32_t>(remain, len);
 
 			if (frame_header_.MASK_)
 			{
 				unsigned char *mask =
 					(unsigned char *)&frame_header_.masking_key_;
-				for (uint32_t i = 0; i < min_len; i++)
+				for (size_t i = 0; i < min_len; i++)
 					payload_.push_back((char)((unsigned char)data[i] ^ mask[i % 4]));
 			}
 			else
@@ -273,7 +275,7 @@ namespace xwebsocket
 	private:
 		enum parser_step
 		{
-			e_fixed_header,// first byte in websocket header
+			e_fixed_header,
 			e_payload_len,
 			e_extened_payload_len,
 			e_masking_key,

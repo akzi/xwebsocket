@@ -39,15 +39,12 @@ namespace xwebsocket
 				set_frame_type(frame_type::e_text).
 				make_frame(msg.c_str(), msg.size()));
 		}
-		void close()
+		void send_close()
 		{
-			assert(!is_close_);
-			if(in_callback_)
-				is_close_ = true;
-			else
-			{
-				on_close();
-			}
+			send_data(frame_maker_.
+				set_fin(true).
+				set_frame_type(frame_type::e_connection_close).
+				make_frame(nullptr, 0));
 		}
 	private:
 		void send_data(std::string &&data)
@@ -69,8 +66,6 @@ namespace xwebsocket
 			if (&other == this)
 				return;
 			is_send_ = other.is_send_;
-			is_close_ = other.is_close_;
-			in_callback_ = other.in_callback_;
 			id_ = other.id_;
 			send_buffer_list_ = std::move(other.send_buffer_list_);
 			close_callback_ = std::move(other.close_callback_);
@@ -131,11 +126,7 @@ namespace xwebsocket
 			}
 			else 
 			{
-				in_callback_ = true;
 				frame_parser_.do_parse(data, (uint32_t)len);
-				in_callback_ = false;
-				if (is_close_)
-					return on_close();
 			}
 			conn_.async_recv_some();
 		}
@@ -168,8 +159,6 @@ namespace xwebsocket
 
 		bool make_handshake_ = false;
 		bool is_send_ = false;
-		bool is_close_ = false;
-		bool in_callback_ = false;
 		int64_t id_ = 0;
 		std::list<std::string> send_buffer_list_;
 		std::function<void()> close_callback_;

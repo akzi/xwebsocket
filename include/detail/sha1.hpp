@@ -49,7 +49,7 @@ namespace detail
 			return true;
 		}
 
-		void input(const uint8_t *message_array,	uint32_t length)
+		void input(const uint8_t *message_array,std::size_t length)
 		{
 			if (!length)
 				return;
@@ -83,7 +83,7 @@ namespace detail
 			}
 		}
 			
-		void input(const void *message_array, uint32_t length)
+		void input(const void *message_array, std::size_t length)
 		{
 			input((unsigned char *)message_array, length);
 		}
