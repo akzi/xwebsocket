@@ -18,10 +18,11 @@ XTEST_SUITE(xserver)
 				(std::string &&payload, xwebsocket::frame_type type, bool){
 
 					if (type == xwebsocket::frame_type::e_connection_close)
-						return sessions_[session_id_].close();
+						return;
 					++msg_count_;
 					std::cout << payload << std::endl;
 					sessions_[session_id_].send_text("hello world: " + std::to_string(msg_count_));
+					//sessions_[session_id_].send_close();
 				});
 				sess.regist_close_callback([session_id_, &sessions_] {
 					sessions_.erase(session_id_);
