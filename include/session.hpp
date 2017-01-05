@@ -110,15 +110,16 @@ namespace xwebsocket
 				http_parser_.append(data, len);
 				if (http_parser_.parse_req())
 				{
+					using cmper = xutil::functional::strncasecmper;
 					make_handshake_ = true;
-					auto upgrade = http_parser_.get_header<xutil::functional::strncasecmper>("Upgrade");
-					auto Sec_WebSocket_Key = http_parser_.get_header<xutil::functional::strncasecmper>("Sec-WebSocket-Key");
-					auto Sec_WebSocket_Protocol = http_parser_.get_header<xutil::functional::strncasecmper>("Sec-WebSocket-Protocol");
+					auto upgrade = http_parser_.get_header<cmper>("Upgrade");
+					auto Sec_WebSocket_Key = http_parser_.get_header<cmper>("Sec-WebSocket-Key");
+					auto Sec_WebSocket_Protocol = http_parser_.get_header<cmper>("Sec-WebSocket-Protocol");
 					if (!xutil::functional::strcasecmper()(upgrade.c_str(), "websocket")||
 						Sec_WebSocket_Key.empty())
 					{
 						response_404();
-						close();
+						on_close();
 					}
 					send_data(make_handshake(Sec_WebSocket_Key, Sec_WebSocket_Protocol));
 
