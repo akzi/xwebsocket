@@ -255,7 +255,9 @@ namespace xwebsocket
 			if (payload_.size() == frame_header_.payload_realy_len_)
 			{
 				assert(message_callback_handle_);
-				message_callback_handle_(std::move(payload_), frame_header_.opcode_, !!frame_header_.FIN_);
+				message_callback_handle_(std::move(payload_), 
+					frame_header_.opcode_,
+					!!frame_header_.FIN_);
 				reset();
 			}
 			return min_len;

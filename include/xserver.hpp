@@ -24,7 +24,8 @@ namespace xwebsocket
 		void start()
 		{
 			proactor_pool_.start();
-			proactor_pool_.regist_accept_callback(std::bind(&xserver::connection_accept_callback,this, std::placeholders::_1));
+			proactor_pool_.regist_accept_callback(
+				std::bind(&xserver::connection_accept_callback, this, std::placeholders::_1));
 		}
 		void stop()
 		{
