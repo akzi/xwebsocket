@@ -20,7 +20,7 @@ namespace xwebsocket
 		accept_key.append(key);
 		accept_key.append("258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
 
-		detail::sha1 sha;
+		xutil::sha1 sha;
 		sha.input(accept_key.data(), accept_key.size());
 		sha.result((uint32_t*)digest);
 
@@ -38,7 +38,7 @@ namespace xwebsocket
 			digest[i + 2] = c;
 		}
 		data.append("Sec-WebSocket-Accept: ");
-		data.append(xbase64::encode(std::string((char*)digest, 20)));
+		data.append(xutil::base64::encode(std::string((char*)digest, 20)));
 		data.append("\r\n");
 
 		if (protocol.size())

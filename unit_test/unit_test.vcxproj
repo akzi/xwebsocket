@@ -110,9 +110,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\detail\base64.hpp" />
-    <ClInclude Include="..\include\detail\md5.hpp" />
-    <ClInclude Include="..\include\detail\sha1.hpp" />
     <ClInclude Include="..\include\frame.hpp" />
     <ClInclude Include="..\include\frame_builder.hpp" />
     <ClInclude Include="..\include\frame_parser.hpp" />
@@ -122,7 +119,6 @@
     <ClInclude Include="..\include\xserver.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="base64_unit_test.cpp" />
     <ClCompile Include="ws_server.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

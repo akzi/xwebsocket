@@ -1,8 +1,7 @@
-
 #include "../include/websocket.hpp"
 #include "../../xtest/include/xtest.hpp"
 
-
+xtest_run;
 XTEST_SUITE(xserver)
 {
 	XUNIT_TEST(test)

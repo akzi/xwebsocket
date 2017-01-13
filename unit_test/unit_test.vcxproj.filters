@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="头文件\detail">
-      <UniqueIdentifier>{9762cca2-9778-4937-9514-88202732b269}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\websocket.hpp">
@@ -26,15 +23,6 @@
     </ClInclude>
     <ClInclude Include="..\include\frame_parser.hpp">
       <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\detail\sha1.hpp">
-      <Filter>头文件\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\detail\md5.hpp">
-      <Filter>头文件\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\detail\base64.hpp">
-      <Filter>头文件\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\include\frame.hpp">
       <Filter>头文件</Filter>
@@ -50,9 +38,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="base64_unit_test.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="ws_server.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
