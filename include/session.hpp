@@ -46,6 +46,10 @@ namespace xwebsocket
 				set_frame_type(frame_type::e_connection_close).
 				make_frame(nullptr, 0));
 		}
+		std::string req_path()
+		{
+			return path_;
+		}
 	private:
 		void send_data(std::string &&data)
 		{
@@ -117,6 +121,7 @@ namespace xwebsocket
 						on_close();
 					}
 					send_data(make_handshake(Sec_WebSocket_Key, Sec_WebSocket_Protocol));
+					path_ = http_parser_.get_path();
 
 					auto buffer = http_parser_.get_string();
 
@@ -168,5 +173,7 @@ namespace xwebsocket
 		xhttper::http_parser http_parser_;
 		xhttper::http_builder http_buider_;
 		xnet::connection conn_;
+
+		std::string path_;
 	};
 }
