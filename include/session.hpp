@@ -121,7 +121,7 @@ namespace xwebsocket
 						on_close();
 					}
 					send_data(make_handshake(Sec_WebSocket_Key, Sec_WebSocket_Protocol));
-					path_ = http_parser_.get_path();
+					path_ = http_parser_.url();
 
 					auto buffer = http_parser_.get_string();
 
