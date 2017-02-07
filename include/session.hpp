@@ -111,9 +111,12 @@ namespace xwebsocket
 				{
 					using cmper = xutil::functional::strncasecmper;
 					make_handshake_ = true;
+					path_ = http_parser_.url();
+
 					auto upgrade = http_parser_.get_header<cmper>("Upgrade");
 					auto Sec_WebSocket_Key = http_parser_.get_header<cmper>("Sec-WebSocket-Key");
 					auto Sec_WebSocket_Protocol = http_parser_.get_header<cmper>("Sec-WebSocket-Protocol");
+
 					if (!xutil::functional::strcasecmper()(upgrade.c_str(), "websocket")||
 						Sec_WebSocket_Key.empty())
 					{
@@ -121,11 +124,10 @@ namespace xwebsocket
 						send_data(http_buider_.build_resp());
 						on_close();
 					}
+
 					send_data(make_handshake(Sec_WebSocket_Key, Sec_WebSocket_Protocol));
-					path_ = http_parser_.path();
 
 					auto buffer = http_parser_.get_string();
-
 					if (buffer.size())
 						return recv_callback((char*)buffer.c_str(), buffer.size());
 				}
