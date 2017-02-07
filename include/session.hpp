@@ -117,11 +117,12 @@ namespace xwebsocket
 					if (!xutil::functional::strcasecmper()(upgrade.c_str(), "websocket")||
 						Sec_WebSocket_Key.empty())
 					{
-						response_404();
+						http_buider_.set_status(404);
+						send_data(http_buider_.build_resp());
 						on_close();
 					}
 					send_data(make_handshake(Sec_WebSocket_Key, Sec_WebSocket_Protocol));
-					path_ = http_parser_.get_path();
+					path_ = http_parser_.path();
 
 					auto buffer = http_parser_.get_string();
 
@@ -135,11 +136,7 @@ namespace xwebsocket
 			}
 			conn_.async_recv_some();
 		}
-		void response_404()
-		{
-			http_buider_.set_status(404);
-			send_data(http_buider_.build_resp());
-		}
+
 		void send_callback(std::size_t len)
 		{
 			is_send_ = false;
